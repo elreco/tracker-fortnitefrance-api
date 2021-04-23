@@ -36,6 +36,7 @@ const dashboard = new ParseDashboard({
 }, {
   allowInsecureHTTP: true
 });
+
 app.use("/dashboard", dashboard);
 
 // Parse Server plays nicely with the rest of your web routes
@@ -46,7 +47,7 @@ app.get('/', function (req, res) {
 const port = process.env.PORT || 1337;
 const httpServer = require('http').createServer(app);
 httpServer.listen(port, function () {
-  console.log('becquetance parse-server running on port ' + port + '.');
+  console.log('tracker parse-server running on port ' + port + '.');
 });
 
 // This will enable the Live Query real-time server

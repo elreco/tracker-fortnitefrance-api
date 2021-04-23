@@ -1,0 +1,1 @@
+require('./fortniteapi-io/stat.js')

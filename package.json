@@ -1,19 +1,19 @@
 {
-  "name": "io-becquetance-api",
+  "name": "tracker-fortnitefrance-api",
   "version": "0.0.0",
-  "description": "Parse API server for Becquetance",
+  "description": "Parse API server for Tracker FortniteFrance",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/deepnox-io/io-becquetance-api"
+    "url": "https://github.com/elreco/tracker-fortnitefrance-api"
   },
   "license": "MIT",
   "dependencies": {
     "@unly/universal-language-detector": "^2.0.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "esm": "^3.2.25",
     "express": "4.17.1",
+    "fortnite-api-io": "^1.8.0",
     "kerberos": "1.1.4",
     "parse": "2.19.0",
     "parse-dashboard": "^2.1.0",
@@ -22,8 +22,8 @@
     "yargs": "^16.2.0"
   },
   "scripts": {
-    "serve": "nodemon -r esm index.js",
-    "start": "node -r esm index.js",
+    "serve": "nodemon -r ./index.js",
+    "start": "node -r ./index.js",
     "lint": "eslint --cache --fix ./cloud && eslint --cache --fix index.js",
     "becquetance": "node ./command/becquetance.js",
     "test": "jasmine"
