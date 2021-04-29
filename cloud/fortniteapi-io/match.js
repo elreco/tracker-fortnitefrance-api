@@ -1,16 +1,19 @@
 const fortniteAPI = require('./index.js');
 
-Parse.Cloud.define("match", async (req) => {
-    const accountId = await fortniteAPI.getAccountIdByUsername(req.params.name);
-    if (accountId.result) {
-        return await fortniteAPI.getPlayerRecentMatches(accountId.account_id)
-    } else {
-        return "sdgdsg"
+Parse.Cloud.beforeFind("Match", async (req) => {
+    if (req.query.get('accountId')) {
+        // aller chercher les résultats sur la table
+        // if pas de résultats || date résultat > 3 minutes ==>
+        return await fortniteAPI.getPlayerRecentMatches(accountId)
+        // if résultats :
+        // renseigner la table Parse
+        // endif
     }
-}, {
+},
+{
     requireMaster: false,
     fields: {
-        name: {
+        accountId: {
           required: true,
           type: String
         }
