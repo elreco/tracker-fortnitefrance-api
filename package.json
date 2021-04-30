@@ -26,8 +26,7 @@
     "serve": "nodemon -r ./index.js",
     "start": "node -r ./index.js",
     "lint": "eslint --cache --fix ./cloud && eslint --cache --fix index.js",
-    "becquetance": "node ./command/becquetance.js",
-    "test": "jasmine"
+    "tracker": "node ./command/tracker.js"
   },
   "engines": {
     "node": ">=4.3"

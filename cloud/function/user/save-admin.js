@@ -1,14 +1,17 @@
 const Parse = require('../../../config/parse-js-config')
-const addRoleToUser = require('../role/add-role-to-user')
 
 async function saveAdmin(userData) {
+  const Role = new Parse.Query(Parse.Role);
+  Role.equalTo("name", "Administrateur");
+  const role = await Role.first({
+    useMasterKey: true
+  })
   const user = new Parse.User()
-  user.set("firstname", userData.firstname || "admin")
-  user.set("lastname", userData.lastname || "user")
-  user.set("fullname", `${userData.firstname} ${userData.lastname}` || "admin user")
+  user.set("pseudo", userData.pseudo || "elreco")
   user.set("username", userData.username || "user")
   user.set("password", userData.password || "password")
   user.set("email", userData.email || "user@user.com")
+  user.set("role", role)
   return user.signUp(null, {
     useMasterKey: true
   })
@@ -17,12 +20,9 @@ async function saveAdmin(userData) {
       userAcl.setPublicReadAccess(true);
       userAcl.setWriteAccess(user.id, true);
       user.setACL(userAcl)
-      addRoleToUser(user, "Administrateur")
       console.info("✔️ User created :")
       console.log({
-        firstname: userData.firstname || "admin",
-        lastname: userData.lastname || "user",
-        fullname: `${userData.firstname} ${userData.lastname}` || "admin user",
+        pseudo: userData.pseudo || "admin user",
         username: userData.username || "user",
         password: userData.password || "password",
         email: userData.email || "user@user.com"
