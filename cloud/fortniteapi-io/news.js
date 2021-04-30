@@ -32,6 +32,7 @@ async function createNews(n) {
     news.set("date", new Date(n.date));
     news.set("video", n.video);
     news.set("type", "normal");
+    news.set("tags", ['battle royale']);
     if (n.image) {
         const file = await getImage(n.image);
         news.set("image", file);
