@@ -37,9 +37,9 @@ const config = {
     }
   },
   customPages: {
-    passwordResetSuccess: `${process.env.FRONT_URL}/password-reset-success`,
-    verifyEmailSuccess: `${process.env.FRONT_URL}/verify-email-success`,
-    choosePassword: `${process.env.FRONT_URL}/choose-password`
+    passwordResetSuccess: `${process.env.FRONT_URL}/user/password-reset-success`,
+    verifyEmailSuccess: `${process.env.FRONT_URL}/user/verify-email-success`,
+    choosePassword: `${process.env.FRONT_URL}/user/choose-password`
   }
 };
 
