@@ -2,43 +2,34 @@ const fortniteapiIo = require('./index.js');
 const fortniteAPI = require('./index.js'),
   dateDiff = require('../function/date-diff.js')
 
-Parse.Cloud.define("stat", async (req) => {
+Parse.Cloud.beforeFind("Stat", async (req) => {
   // aller chercher les résultats sur la table
-  const statQuery = new Parse.Query("Stat");
-  statQuery.equalTo('name', req.params.name);
-  const stat = await statQuery.first({
-    useMasterKey: true
-  })
-  if (!stat) {
-    const accountId = await fortniteAPI.getAccountIdByUsername(req.params.name).catch((error) => {
-      throw error
-    });
-    if (!accountId.account_id) throw 'Aucun résultat trouvé'
+  if (req.query.name) {
+    const statQuery = new Parse.Query("Stat");
+    statQuery.equalTo('name', req.query.name);
+    const stat = await statQuery.first({
+      useMasterKey: true
+    })
 
-    const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId.account_id, req.params.platform).catch((error) => {
-      throw error
-    });
-    return createOrUpdateStat(apiStat, accountId.account_id)
-  } else if (dateDiff(stat.get('date')) > 3) {
-    const apiStat = await fortniteAPI.getGlobalPlayerStats(stat.get('apiId'), req.params.platform).catch((error) => {
-      throw error
-    });
-    return createOrUpdateStat(apiStat, stat.get('apiId'), stat)
-  } else {
-    return stat
-  }
-}, {
-  requireMaster: false,
-  fields: {
-    name: {
-      required: true,
-      type: String
-    },
-    platform: {
-      required: false,
-      type: String
+    if (!stat) {
+      const accountId = await fortniteAPI.getAccountIdByUsername(req.params.name).catch((error) => {
+        throw error
+      });
+      if (!accountId.account_id) throw 'Aucun résultat trouvé'
+
+      const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId.account_id).catch((error) => {
+        throw error
+      });
+      await createOrUpdateStat(apiStat, accountId.account_id)
+    } else if (dateDiff(stat.get('date')) > 3) {
+      const apiStat = await fortniteAPI.getGlobalPlayerStats(stat.get('apiId')).catch((error) => {
+        throw error
+      });
+      await createOrUpdateStat(apiStat, stat.get('apiId'), stat)
     }
   }
+
+  return req
 });
 
 async function createOrUpdateStat(s, accountId, stat = null) {
