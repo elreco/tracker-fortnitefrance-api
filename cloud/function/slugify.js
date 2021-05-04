@@ -13,7 +13,7 @@ function slugify (str, id) {
         .replace(/\s+/g, '-') // collapse whitespace and replace by -
         .replace(/-+/g, '-'); // collapse dashes
 
-    return `${str}-${id}`;
+    return str;
 }
 
 module.exports = slugify
