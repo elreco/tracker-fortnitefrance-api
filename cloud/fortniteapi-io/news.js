@@ -3,7 +3,7 @@ const getImage = require('../function/get-image.js')
 
 Parse.Cloud.define("news", async (req) => {
     const apiNews = await fortniteAPI.getNews("br").catch((error) => {
-        return error
+        throw error
     });
     if (apiNews.result) {
         await Promise.all(apiNews.news.map(async (n) => {
