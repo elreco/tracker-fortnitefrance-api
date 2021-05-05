@@ -1,18 +1,18 @@
-const fortniteapiIo = require('./index.js');
 const fortniteAPI = require('./index.js'),
   dateDiff = require('../function/date-diff.js')
 
 Parse.Cloud.beforeFind("Stat", async (req) => {
   // aller chercher les résultats sur la table
-  if (req.query.name) {
+  if (!req.master && req.query._where && req.query._where.name) {
+    var name = req.query._where.name
     const statQuery = new Parse.Query("Stat");
-    statQuery.equalTo('name', req.query.name);
+    statQuery.equalTo('name', name);
     const stat = await statQuery.first({
       useMasterKey: true
     })
 
     if (!stat) {
-      const accountId = await fortniteAPI.getAccountIdByUsername(req.params.name).catch((error) => {
+      const accountId = await fortniteAPI.getAccountIdByUsername(name).catch((error) => {
         throw error
       });
       if (!accountId.account_id) throw 'Aucun résultat trouvé'
@@ -30,15 +30,16 @@ Parse.Cloud.beforeFind("Stat", async (req) => {
   }
 
   return req
+}, {
+  requireMaster: false,
+  requireUser: false
 });
 
 async function createOrUpdateStat(s, accountId, stat = null) {
   if (!s.result) {
     throw 'Aucun résultat trouvé'
   }
-  var create = false
   if (!stat) {
-    create = true
     const Stat = Parse.Object.extend("Stat");
     stat = new Stat();
   }
@@ -52,16 +53,9 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   stat.set("seasons_available", s.seasons_available);
   stat.set("season", s.season);
   stat.set("date", new Date());
-
-  if (create) {
-    await stat.save(null, {
-      useMasterKey: true
-    })
-  } else {
-    await stat.update(null, {
-      useMasterKey: true
-    })
-  }
+  await stat.save(null, {
+    useMasterKey: true
+  })
 
   return stat;
 }
