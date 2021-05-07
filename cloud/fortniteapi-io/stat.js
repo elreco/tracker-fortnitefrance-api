@@ -1,5 +1,7 @@
 const fortniteAPI = require('./index.js'),
-  dateDiff = require('../function/date-diff.js')
+  dateDiff = require('../function/date-diff.js'),
+  getRandomLocalImage = require('../function/get-random-local-image.js'),
+  path = require('path');
 
 Parse.Cloud.beforeFind("Stat", async (req) => {
   // aller chercher les résultats sur la table
@@ -53,6 +55,11 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   stat.set("seasons_available", s.seasons_available);
   stat.set("season", s.season);
   stat.set("date", new Date());
+  if (!stat.get('character')) {
+    const dirPath = path.resolve(__dirname, '../assets/characters/');
+    const file = await getRandomLocalImage(dirPath);
+    stat.set("character", file);
+  }
   await stat.save(null, {
     useMasterKey: true
   })

@@ -1,5 +1,5 @@
-const fortniteAPI = require('./index.js');
-const getImage = require('../function/get-image.js')
+const fortniteAPI = require('./index.js'),
+    getImage = require('../function/get-image.js')
 
 Parse.Cloud.define("news", async () => {
     const apiNews = await fortniteAPI.getNews("br").catch((error) => {
