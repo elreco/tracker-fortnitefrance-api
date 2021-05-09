@@ -1,7 +1,7 @@
 const fortniteAPI = require('./index.js'),
     getImage = require('../function/get-image.js')
 
-Parse.Cloud.define("news", async () => {
+async function getNewsFromApi() {
     const apiNews = await fortniteAPI.getNews("br").catch((error) => {
         throw error
     });
@@ -17,8 +17,7 @@ Parse.Cloud.define("news", async () => {
             }
         }))
     }
-    return 'News created';
-});
+}
 
 async function createNews(n) {
     const userQuery = new Parse.Query(Parse.User);
@@ -51,4 +50,4 @@ async function createNews(n) {
     return news;
 }
 
-module.exports = Parse
+module.exports = { getNewsFromApi }

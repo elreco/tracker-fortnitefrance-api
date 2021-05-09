@@ -1,5 +1,3 @@
-require('./fortniteapi-io/stat.js')
-require('./fortniteapi-io/match.js')
-require('./fortniteapi-io/news.js')
 require('./user.js')
 require('./news.js')
+require('./stat.js')
