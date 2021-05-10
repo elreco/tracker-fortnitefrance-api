@@ -58,9 +58,7 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   })
   await setRank(stat)
   await createMatchesFromApi(stat);
-  /* Parse.Cloud.startJob('updateRank', {
-    stat: stat
-  }); */
+
   return stat;
 }
 
@@ -94,7 +92,7 @@ async function setRank(stat) {
       }))
     }
 
-  } else if (statReplace.id != stat.id) {
+  } else if (statReplace && statReplace.id != stat.id) {
     stat.set('rank', 1)
   }
 

@@ -39,7 +39,7 @@ async function createMatch(m, stat) {
     })
 
     const relation = stat.relation("matches");
-    relation.add(savedMatch);
+    await relation.add(savedMatch);
     await stat.save(null, {
       useMasterKey: true
     })
