@@ -1,6 +1,7 @@
 const fortniteAPI = require('./index.js'),
   dateDiff = require('../function/date-diff.js'),
   getRandomLocalImage = require('../function/get-random-local-image.js'),
+  { createMatchesFromApi } = require('./match.js'),
   path = require('path');
 
 async function getStatFromApi(name) {
@@ -9,9 +10,8 @@ async function getStatFromApi(name) {
   const stat = await statQuery.first({
     useMasterKey: true
   })
-
   if (!stat) {
-    const accountId = await fortniteAPI.getAccountIdByUsername(name).catch((error) => {
+    const accountId = await fortniteAPI.getAccountIdByUsername(encodeURIComponent(name)).catch((error) => {
       throw error
     });
     if (!accountId.account_id) throw 'Aucun résultat trouvé'
@@ -20,13 +20,15 @@ async function getStatFromApi(name) {
       throw error
     });
     await createOrUpdateStat(apiStat, accountId.account_id)
-  } else if (dateDiff(stat.get('date')) > 3) {
+    /* } else if (dateDiff(stat.get('date')) > 3) { */
+  } else {
     const apiStat = await fortniteAPI.getGlobalPlayerStats(stat.get('apiId')).catch((error) => {
       throw error
     });
     await createOrUpdateStat(apiStat, stat.get('apiId'), stat)
   }
 }
+
 async function createOrUpdateStat(s, accountId, stat = null) {
   if (!s.result) {
     throw 'Aucun résultat trouvé'
@@ -55,6 +57,7 @@ async function createOrUpdateStat(s, accountId, stat = null) {
     useMasterKey: true
   })
   await setRank(stat)
+  await createMatchesFromApi(stat);
   /* Parse.Cloud.startJob('updateRank', {
     stat: stat
   }); */
@@ -62,35 +65,44 @@ async function createOrUpdateStat(s, accountId, stat = null) {
 }
 
 async function setRank(stat) {
-  const kd = stat.global_stats.solo.kd + stat.global_stats.duo.kd + stat.global_stats.squad.kd
+  const kd = stat.get('global_stats').solo.kd + stat.get('global_stats').duo.kd + stat.get('global_stats').squad.kd
 
-  const statQuery = new Parse.Query("Stat");
-  statQuery.greaterThan('totalKd', kd);
-  statQuery.lessThan('totalKd', kd);
+  var statQuery = new Parse.Query("Stat");
+  statQuery.ascending("totalKd");
+  statQuery.greaterThanOrEqualTo('totalKd', kd);
+  statQuery.notEqualTo('objectId', stat.id);
   const statReplace = await statQuery.first({
       useMasterKey: true
   })
 
   if (statReplace) {
-    const rank = statReplace.get('rank')
-    stat.set('rank', rank)
-    statQuery = new Parse.Query("Stat");
-    statQuery.lessThanOrEqualTo('rank', rank);
-    statQuery.notEqualTo('objectId', stat.get('id'));
-    const allStatBefore = await statQuery.find({
-      useMasterKey: true
-    })
-    await Promise.all(allStatBefore.map(async (s) => {
-      s.set('rank', s.get('rank') + 1)
-      await s.save()
-    }))
-  } else {
+    var rank = statReplace.get('rank')
+    stat.set('rank', rank + 1)
+    var statQuery2 = new Parse.Query("Stat");
+    statQuery2.descending("rank");
+    statQuery2.greaterThan('rank', rank);
+    statQuery2.notEqualTo('objectId', stat.id);
+    if (rank != stat.get('rank')) {
+      const allStatBefore = await statQuery2.find({
+        useMasterKey: true
+      })
+      await Promise.all(allStatBefore.map(async (s) => {
+        s.set('rank', s.get('rank') + 1)
+        await s.save(null, {
+          useMasterKey: true
+        })
+      }))
+    }
+
+  } else if (statReplace.id != stat.id) {
     stat.set('rank', 1)
   }
 
-  await stat.save(null, {
-    useMasterKey: true
-  })
+  if (statReplace) {
+    await stat.save(null, {
+      useMasterKey: true
+    })
+  }
 }
 
 module.exports = { getStatFromApi }
