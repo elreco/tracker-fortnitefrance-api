@@ -16,10 +16,10 @@ async function createMatchesFromApi(stat) {
 async function createMatch(m, stat) {
 
   var matchQuery = new Parse.Query("Match");
-  matchQuery.equalTo('date', m.date);
+  matchQuery.equalTo('date', new Date(m.date));
   matchQuery.equalTo('score', m.score);
   matchQuery.equalTo('minutesplayed', m.minutesplayed);
-  matchQuery.equalTo('account', stat.get('apiId'));
+  matchQuery.equalTo('accountId', stat.get('apiId'));
   const matchExists = await matchQuery.first({
       useMasterKey: true
   })
@@ -27,20 +27,27 @@ async function createMatch(m, stat) {
   if (!matchExists) {
     const Match = Parse.Object.extend("Match");
     match = new Match();
-    match.set("account", stat.get('apiId'));
+    match.set("accountId", stat.get('apiId'));
     match.set("match_data", m);
-    match.set("date", m.date);
+    match.set("date", new Date(m.date));
     match.set("score", m.score);
     match.set("minutesplayed", m.minutesplayed);
     const savedMatch = await match.save(null, {
       useMasterKey: true
     })
 
-    const relation = stat.relation("matches");
-    await relation.add(savedMatch);
-    return await stat.save(null, {
+    const statQuery = new Parse.Query("Stat");
+    statQuery.equalTo('objectId', stat.id);
+    const statRelation = await statQuery.first({
       useMasterKey: true
     })
+    const relation = statRelation.relation("matches");
+    relation.add(savedMatch);
+    await statRelation.save(null, {
+    useMasterKey: true
+    })
+
+    return savedMatch;
   }
 }
 

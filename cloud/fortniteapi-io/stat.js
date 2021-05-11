@@ -6,7 +6,7 @@ const fortniteAPI = require('./index.js'),
 
 async function getStatFromApi(name) {
   const statQuery = new Parse.Query("Stat");
-  statQuery.equalTo('name', name);
+  statQuery.equalTo('name_lowercase', name.toLowerCase());
   const stat = await statQuery.first({
     useMasterKey: true
   })
@@ -14,7 +14,8 @@ async function getStatFromApi(name) {
     const accountId = await fortniteAPI.getAccountIdByUsername(encodeURIComponent(name)).catch((error) => {
       console.log(error)
     });
-    if (!accountId.account_id) throw 'Aucun résultat trouvé'
+
+    if (!accountId.account_id) throw `Aucun résultat trouvé pour ${name}`
 
     const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId.account_id).catch((error) => {
       console.log(error)
@@ -43,13 +44,14 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   stat.set("apiId", accountId);
   stat.set("mode", s.mode);
   stat.set("name", s.name);
-  stat.set("account", s.account);
+  stat.set("name_lowercase", s.name.toLowerCase());
+  stat.set("accountId", s.account);
   stat.set("global_stats", s.global_stats);
   stat.set("per_input", s.per_input);
   stat.set("seasons_available", s.seasons_available);
   stat.set("season", s.season);
   stat.set("date", new Date());
-  stat.set("totalKd", s.global_stats.solo.kd + s.global_stats.duo.kd + s.global_stats.squad.kd);
+  stat.set("totalKd", getTotalKd(s.global_stats));
   if (!stat.get('character')) {
     const dirPath = path.resolve(__dirname, '../assets/characters/');
     const file = await getRandomLocalImage(dirPath);
@@ -65,7 +67,7 @@ async function createOrUpdateStat(s, accountId, stat = null) {
 }
 
 async function setRank(stat) {
-  const kd = stat.get('global_stats').solo.kd + stat.get('global_stats').duo.kd + stat.get('global_stats').squad.kd
+  const kd = getTotalKd(stat.get('global_stats'))
 
   var statQuery = new Parse.Query("Stat");
   statQuery.ascending("totalKd");
@@ -103,6 +105,23 @@ async function setRank(stat) {
       useMasterKey: true
     })
   }
+}
+
+function getTotalKd(global_stats) {
+  var totalKd = 0;
+
+  if (global_stats.solo && global_stats.solo.kd) {
+    totalKd += global_stats.solo.kd
+  }
+
+  if (global_stats.duo && global_stats.duo.kd) {
+    totalKd += global_stats.duo.kd
+  }
+
+  if (global_stats.squad && global_stats.squad.kd) {
+    totalKd += global_stats.squad.kd
+  }
+  return totalKd;
 }
 
 module.exports = { getStatFromApi }
