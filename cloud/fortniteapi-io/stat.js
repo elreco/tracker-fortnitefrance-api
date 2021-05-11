@@ -12,27 +12,29 @@ async function getStatFromApi(name) {
   })
   if (!stat) {
     const accountId = await fortniteAPI.getAccountIdByUsername(encodeURIComponent(name)).catch((error) => {
-      throw error
+      console.log(error)
     });
     if (!accountId.account_id) throw 'Aucun résultat trouvé'
 
     const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId.account_id).catch((error) => {
-      throw error
+      console.log(error)
     });
-    await createOrUpdateStat(apiStat, accountId.account_id)
-    /* } else if (dateDiff(stat.get('date')) > 3) { */
-  } else {
+    if (apiStat.result) {
+      await createOrUpdateStat(apiStat, accountId.account_id)
+    }
+
+  } else if (dateDiff(stat.get('date')) > 3) {
+  /* } else { */
     const apiStat = await fortniteAPI.getGlobalPlayerStats(stat.get('apiId')).catch((error) => {
-      throw error
+      console.log(error)
     });
-    await createOrUpdateStat(apiStat, stat.get('apiId'), stat)
+    if (apiStat.result) {
+      await createOrUpdateStat(apiStat, stat.get('apiId'), stat)
+    }
   }
 }
 
 async function createOrUpdateStat(s, accountId, stat = null) {
-  if (!s.result) {
-    throw 'Aucun résultat trouvé'
-  }
   if (!stat) {
     const Stat = Parse.Object.extend("Stat");
     stat = new Stat();

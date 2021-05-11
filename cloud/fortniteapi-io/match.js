@@ -3,12 +3,10 @@ const fortniteAPI = require('./index.js');
 async function createMatchesFromApi(stat) {
 
   const apiMatches = await fortniteAPI.getPlayerRecentMatches(stat.get('apiId')).catch((error) => {
-    throw error
+    console.log(error)
   });
-  //return apiMatches;
-  if (!apiMatches.result) {
-    throw 'Aucun résultat trouvé'
-  } else {
+
+  if (apiMatches.result) {
     await Promise.all(apiMatches.matches.map(async (m) => {
       await createMatch(m, stat)
     }))
@@ -40,7 +38,7 @@ async function createMatch(m, stat) {
 
     const relation = stat.relation("matches");
     await relation.add(savedMatch);
-    await stat.save(null, {
+    return await stat.save(null, {
       useMasterKey: true
     })
   }
