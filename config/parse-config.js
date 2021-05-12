@@ -1,4 +1,4 @@
-const databaseUri = process.env.DATABASE_URI || process.env.MONGO_URL;
+const databaseUri = process.env.MONGO_URL;
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
@@ -40,7 +40,8 @@ const config = {
     passwordResetSuccess: `${process.env.FRONT_URL}/user/auth/password-reset-success`,
     verifyEmailSuccess: `${process.env.FRONT_URL}/user/auth/verify-email-success`,
     choosePassword: `${process.env.FRONT_URL}/user/auth/choose-password`
-  }
+  },
+  maxUploadSize: "500mb"
 };
 
 module.exports = config
