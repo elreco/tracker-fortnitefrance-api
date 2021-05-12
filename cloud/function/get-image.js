@@ -15,11 +15,19 @@ async function getImage(url) {
             const contentType = response.headers['content-type'];
             if (data) {
                 const file = new Parse.File('image', data, contentType);
-                await file.save({
-                    useMasterKey: true
-                }).catch((error) => console.log(error));
-                return file;
+                if (file) {
+                    await file.save({
+                        useMasterKey: true
+                    }).catch((error) => console.log(error));
+                    return file;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
             }
+        } else {
+            return null;
         }
     } else {
         return null;
