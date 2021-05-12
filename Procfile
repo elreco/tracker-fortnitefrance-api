@@ -1,2 +1,2 @@
 web: yarn start
-release: yarn becquetance --init-becquetance && yarn becquetance --update-schemas
+release: yarn tracker --init-tracker && yarn tracker --update-schemas
