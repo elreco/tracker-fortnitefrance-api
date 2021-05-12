@@ -40,7 +40,8 @@ const config = {
     passwordResetSuccess: `${process.env.FRONT_URL}/user/auth/password-reset-success`,
     verifyEmailSuccess: `${process.env.FRONT_URL}/user/auth/verify-email-success`,
     choosePassword: `${process.env.FRONT_URL}/user/auth/choose-password`
-  }
+  },
+  maxUploadSize: "150mb"
 };
 
 module.exports = config
