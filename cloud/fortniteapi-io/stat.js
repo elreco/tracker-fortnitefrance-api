@@ -76,7 +76,7 @@ async function setRank(stat) {
   const statReplace = await statQuery.first({
       useMasterKey: true
   })
-  console.log(statReplace)
+  if (statReplace && statReplace.get('rank') > 300) return;
   if (statReplace) {
     var rank = statReplace.get('rank')
     stat.set('rank', rank + 1)
