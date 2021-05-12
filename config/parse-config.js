@@ -1,4 +1,4 @@
-const databaseUri = process.env.DATABASE_URI || process.env.MONGO_URL;
+const databaseUri = process.env.MONGO_URL;
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
