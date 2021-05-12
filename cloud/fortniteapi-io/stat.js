@@ -45,7 +45,7 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   stat.set("mode", s.mode);
   stat.set("name", s.name);
   stat.set("name_lowercase", s.name.toLowerCase());
-  stat.set("accountId", s.account);
+  stat.set("account", s.account);
   stat.set("global_stats", s.global_stats);
   stat.set("per_input", s.per_input);
   stat.set("seasons_available", s.seasons_available);
