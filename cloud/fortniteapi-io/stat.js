@@ -76,7 +76,7 @@ async function setRank(stat) {
   const statReplace = await statQuery.first({
       useMasterKey: true
   })
-
+  console.log(statReplace)
   if (statReplace) {
     var rank = statReplace.get('rank')
     stat.set('rank', rank + 1)
@@ -98,6 +98,17 @@ async function setRank(stat) {
 
   } else if (statReplace && statReplace.id != stat.id) {
     stat.set('rank', 1)
+    if (1 != stat.get('rank')) {
+      const allStatBefore = await statQuery2.find({
+        useMasterKey: true
+      })
+      await Promise.all(allStatBefore.map(async (s) => {
+        s.set('rank', s.get('rank') + 1)
+        await s.save(null, {
+          useMasterKey: true
+        })
+      }))
+    }
   }
 
   if (statReplace) {
