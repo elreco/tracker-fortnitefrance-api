@@ -42,7 +42,9 @@ async function createNews(n) {
     news.set("author", user);
     if (n.image) {
         const file = await getImage(n.image);
-        news.set("image", file);
+        if (file) {
+            news.set("image", file);
+        }
     }
     await news.save(null, {
         useMasterKey: true

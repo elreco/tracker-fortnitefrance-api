@@ -9,14 +9,18 @@ async function getImage(url) {
     };
 
     const response = await request(options);
-    const data = Array.from(Buffer.from(response.body, 'binary'));
-    const contentType = response.headers['content-type'];
-    const file = new Parse.File('image', data, contentType);
-    await file.save({
-        useMasterKey: true
-    }).catch((error) => console.log(error));
+    if (response && response.body) {
+        const data = Array.from(Buffer.from(response.body, 'binary'));
+        const contentType = response.headers['content-type'];
+        const file = new Parse.File('image', data, contentType);
+        await file.save({
+            useMasterKey: true
+        }).catch((error) => console.log(error));
 
-    return file;
+        return file;
+    } else {
+        return null;
+    }
 }
 
 module.exports = getImage
