@@ -41,7 +41,7 @@ const config = {
     verifyEmailSuccess: `${process.env.FRONT_URL}/user/auth/verify-email-success`,
     choosePassword: `${process.env.FRONT_URL}/user/auth/choose-password`
   },
-  maxUploadSize: "150mb"
+  maxUploadSize: "500mb"
 };
 
 module.exports = config
