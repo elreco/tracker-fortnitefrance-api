@@ -6,7 +6,7 @@ async function createMatchesFromApi(stat) {
     console.log(error)
   });
 
-  if (apiMatches.result) {
+  if (apiMatches && apiMatches.result) {
     await Promise.all(apiMatches.matches.map(async (m) => {
       await createMatch(m, stat)
     }))

@@ -20,7 +20,7 @@ async function getStatFromApi(name) {
     const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId.account_id).catch((error) => {
       console.log(error)
     });
-    if (apiStat.result) {
+    if (apiStat && apiStat.result) {
       await createOrUpdateStat(apiStat, accountId.account_id)
     }
 
@@ -29,7 +29,7 @@ async function getStatFromApi(name) {
     const apiStat = await fortniteAPI.getGlobalPlayerStats(stat.get('apiId')).catch((error) => {
       console.log(error)
     });
-    if (apiStat.result) {
+    if (apiStat && apiStat.result) {
       await createOrUpdateStat(apiStat, stat.get('apiId'), stat)
     }
   }
