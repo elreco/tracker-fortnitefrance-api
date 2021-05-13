@@ -69,18 +69,18 @@ async function createOrUpdateStat(s, accountId, stat = null) {
 async function setRank(stat) {
   const kd = getTotalKd(stat.get('global_stats'))
 
-  var statQuery = new Parse.Query("Stat");
+  const statQuery = new Parse.Query("Stat");
   statQuery.ascending("totalKd");
   statQuery.greaterThanOrEqualTo('totalKd', kd);
   statQuery.notEqualTo('objectId', stat.id);
   const statReplace = await statQuery.first({
-      useMasterKey: true
+    useMasterKey: true
   })
   if (statReplace && statReplace.get('rank') > 300) return;
   if (statReplace) {
-    var rank = statReplace.get('rank')
+    const rank = statReplace.get('rank')
     stat.set('rank', rank + 1)
-    var statQuery2 = new Parse.Query("Stat");
+    const statQuery2 = new Parse.Query("Stat");
     statQuery2.descending("rank");
     statQuery2.greaterThan('rank', rank);
     statQuery2.notEqualTo('objectId', stat.id);
@@ -96,9 +96,10 @@ async function setRank(stat) {
       }))
     }
 
-  } else if (statReplace && statReplace.id != stat.id) {
+  } else {
     stat.set('rank', 1)
-    if (1 != stat.get('rank')) {
+    if (stat.get('rank') != 1) {
+      const statQuery2 = new Parse.Query("Stat");
       const allStatBefore = await statQuery2.find({
         useMasterKey: true
       })
@@ -119,7 +120,7 @@ async function setRank(stat) {
 }
 
 function getTotalKd(global_stats) {
-  var totalKd = 0;
+  let totalKd = 0;
 
   if (global_stats.solo && global_stats.solo.kd) {
     totalKd += global_stats.solo.kd
