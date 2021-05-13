@@ -15,18 +15,18 @@ async function createMatchesFromApi(stat) {
 
 async function createMatch(m, stat) {
 
-  var matchQuery = new Parse.Query("Match");
+  const matchQuery = new Parse.Query("Match");
   matchQuery.equalTo('date', new Date(m.date));
   matchQuery.equalTo('score', m.score);
   matchQuery.equalTo('minutesplayed', m.minutesplayed);
   matchQuery.equalTo('accountId', stat.get('apiId'));
   const matchExists = await matchQuery.first({
-      useMasterKey: true
+    useMasterKey: true
   })
 
   if (!matchExists) {
     const Match = Parse.Object.extend("Match");
-    match = new Match();
+    const match = new Match();
     match.set("accountId", stat.get('apiId'));
     match.set("match_data", m);
     match.set("date", new Date(m.date));
@@ -44,7 +44,7 @@ async function createMatch(m, stat) {
     const relation = statRelation.relation("matches");
     relation.add(savedMatch);
     await statRelation.save(null, {
-    useMasterKey: true
+      useMasterKey: true
     })
 
     return savedMatch;
