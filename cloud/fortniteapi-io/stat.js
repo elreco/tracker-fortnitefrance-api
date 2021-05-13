@@ -60,7 +60,7 @@ async function createOrUpdateStat(s, accountId, stat = null) {
   await stat.save(null, {
     useMasterKey: true
   })
-  await setRank(stat)
+  /* await setRank(stat) */
   await createMatchesFromApi(stat);
 
   return stat;
@@ -97,8 +97,8 @@ async function setRank(stat) {
     }
 
   } else {
-    stat.set('rank', 1)
     if (stat.get('rank') != 1) {
+      stat.set('rank', 1)
       const statQuery2 = new Parse.Query("Stat");
       const allStatBefore = await statQuery2.find({
         useMasterKey: true
