@@ -5,7 +5,7 @@ async function getNewsFromApi() {
     const apiNews = await fortniteAPI.getNews("br").catch((error) => {
         throw error
     });
-    if (apiNews.result) {
+    if (apiNews && apiNews.result) {
         await Promise.all(apiNews.news.map(async (n) => {
             const newsQuery = new Parse.Query("News");
             newsQuery.equalTo('apiId', n.id);
