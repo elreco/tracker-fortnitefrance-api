@@ -33,6 +33,13 @@ Parse.Cloud.define("newsAddView", async (req) => {
   return await news.save(null, {
     useMasterKey: true
   })
+}, {
+  fields: {
+    id: {
+      required: true,
+      type: String
+    }
+  }
 });
 
 module.exports = Parse
