@@ -69,7 +69,8 @@ async function createOrUpdateStat(s, accountId, stat = null) {
 
 async function setLadder() {
   const statQuery = new Parse.Query("Stat");
-  statQuery.descending("totalKd", "totalWins");
+  statQuery.descending("totalKd");
+  statQuery.addDescending("totalWins");
   statQuery.select("rank");
   const stats = await statQuery.find({
     useMasterKey: true
