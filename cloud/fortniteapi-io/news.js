@@ -38,7 +38,7 @@ async function createNews(n) {
   news.set("video", n.video);
   news.set("type", "normal");
   news.set("tags", ['battle royale']);
-  news.set("views", 0);
+  news.set("views", randomIntFromInterval(300, 800));
   news.set("author", user);
   if (n.image) {
     const file = await getImage(n.image);
@@ -50,6 +50,10 @@ async function createNews(n) {
     useMasterKey: true
   })
   return news;
+}
+
+function randomIntFromInterval(min, max) { // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 module.exports = { getNewsFromApi }
