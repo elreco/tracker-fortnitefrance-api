@@ -72,6 +72,7 @@ async function setLadder() {
   statQuery.descending("totalWins");
   statQuery.addDescending("totalKd");
   statQuery.greaterThan("totalWins", 0);
+  statQuery.limit(1000);
   statQuery.select("rank");
   const stats = await statQuery.find({
     useMasterKey: true
