@@ -71,7 +71,6 @@ async function setLadder() {
   const statQuery = new Parse.Query("Stat");
   statQuery.descending("totalWins");
   statQuery.addDescending("totalKd");
-  statQuery.greaterThan("totalWins", 0);
   statQuery.limit(9999999);
   statQuery.select("rank");
   const stats = await statQuery.find({
