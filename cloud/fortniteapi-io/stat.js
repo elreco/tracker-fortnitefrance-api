@@ -87,6 +87,37 @@ async function setLadder() {
   }))
 }
 
+async function linkFortniteAccount(accountId, userId) {
+  const statQuery = new Parse.Query("Stat");
+  statQuery.equalTo('apiId', accountId);
+  var stat = await statQuery.first({
+    useMasterKey: true
+  })
+  if (!stat) {
+    const apiStat = await fortniteAPI.getGlobalPlayerStats(accountId).catch((error) => {
+      console.log(error)
+    });
+    if (apiStat && apiStat.result) {
+      stat = await createOrUpdateStat(apiStat, accountId, stat)
+    }
+  }
+
+  const userQuery = new Parse.Query(Parse.User);
+  userQuery.equalTo('objectId', userId);
+  const user = await userQuery.first({
+    useMasterKey: true
+  })
+
+  if (user) {
+    user.set('stat', stat);
+    return await user.save(null, {
+      useMasterKey: true
+    })
+  } else {
+    return null;
+  }
+}
+
 function getTotalKd(global_stats) {
   let totalKd = 0;
 
@@ -121,4 +152,4 @@ function getTotalWins(global_stats) {
   return wins;
 }
 
-module.exports = { getStatFromApi, setLadder }
+module.exports = { getStatFromApi, setLadder, linkFortniteAccount }
