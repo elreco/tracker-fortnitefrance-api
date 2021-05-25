@@ -1,6 +1,6 @@
 const {
 setShop
-} = require('./fortniteapi-io/shop.js')
+} = require('./fortniteapi-io/item.js')
 
 Parse.Cloud.job("shop", async (req) => {
     const {
