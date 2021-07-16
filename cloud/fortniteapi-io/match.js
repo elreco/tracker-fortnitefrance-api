@@ -7,7 +7,9 @@ async function createMatchesFromApi(stat) {
   });
 
   if (apiMatches && apiMatches.result) {
-    await Promise.all(apiMatches.matches.map(async (m) => {
+    var matches = [];
+    matches = apiMatches.matches && apiMatches.matches.length ? apiMatches.matches.slice(0, 5) : [];
+    await Promise.all(matches.map(async (m) => {
       await createMatch(m, stat)
     }))
   }
