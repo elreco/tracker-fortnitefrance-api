@@ -8,6 +8,8 @@ const appName = process.env.APP_NAME || "Parse App";
 const dashboardAuth = process.env.DASHBOARD_AUTH || "user:password";
 const mountPath = process.env.PARSE_MOUNT || '/parse';
 const config = require('./config/parse-config');
+const epicLogin = require('./cloud/function/epic-games/epic-login');
+const { linkFortniteAccount } = require('./cloud/fortniteapi-io/stat');
 
 const app = express();
 
@@ -43,6 +45,23 @@ app.use("/dashboard", dashboard);
 app.get('/', function (req, res) {
   res.redirect('/dashboard');
 });
+
+app.get('/callback', async function (req, res) {
+  var redirect_url = `${process.env.FRONT_URL}/account/link`
+  if (!req.query || !req.query.code || !req.query.userId) {
+    return res.redirect(`${redirect_url}&error=true`);
+  }
+
+  const epicAccount = await epicLogin(req.query.code);
+  console.log(epicAccount)
+  console.log(epicAccount.account_id)
+  if (epicAccount && epicAccount.account_id) {
+    await linkFortniteAccount(epicAccount.account_id, req.query.userId)
+    res.redirect(`${redirect_url}&error=false`);
+  } else {
+    res.redirect(`${redirect_url}&error=true`);
+  }
+})
 
 const port = process.env.PORT || 1337;
 const httpServer = require('http').createServer(app);
