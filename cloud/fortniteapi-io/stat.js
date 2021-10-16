@@ -77,7 +77,7 @@ async function setLadder() {
     useMasterKey: true
   })
 
-  var rank = 0;
+  let rank = 0;
   await Promise.all(stats.map(async (s) => {
     rank += 1;
     s.set('rank', rank);
@@ -90,7 +90,7 @@ async function setLadder() {
 async function linkFortniteAccount(accountId, userId) {
   const statQuery = new Parse.Query("Stat");
   statQuery.equalTo('apiId', accountId);
-  var stat = await statQuery.first({
+  let stat = await statQuery.first({
     useMasterKey: true
   })
   if (!stat) {

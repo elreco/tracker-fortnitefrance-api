@@ -47,7 +47,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/callback', async function (req, res) {
-  var redirect_url = `${process.env.FRONT_URL}/account/link`
+  const redirect_url = `${process.env.FRONT_URL}/account/link`
   if (!req.query || !req.query.code || !req.query.userId) {
     return res.redirect(`${redirect_url}&error=true`);
   }
